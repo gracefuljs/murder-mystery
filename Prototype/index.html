@@ -10,22 +10,26 @@
 	<div class="container-full">
 		<header>
 			<h1>Murder Mystery Prototype</h1>
-			<input type="button" name="display-details" id="display-details" class="button" value="Generate Mystery" onclick="generateMystery()">
 		</header>
 		
-		<h2>Mystery Details</h2>
-		<div class="container-med" id="mystery-details">
-			A summary of the crime appears here...
+		<div id="mystery-controls">
+			<input type="button" name="display-details" id="display-details" class="button" value="Generate Mystery" onclick="generateMystery()">
+			<div id="location-selection-container" class="hidden">Select Location: <select id="location-selection"></select></div>
+			<div class="container-med" id="mystery-details">
+				A summary of the crime appears here...
+			</div>
 		</div>
-		
-		<h2>Suspect Details</h2>
-		<div class="container-med" id="suspect-details">
-			A summary of the suspect data appears here...
+		<div id="suspect-details">
 		</div>
 	</div>
 
 </body>
 
+<script src="js/pixi.min.js"></script>
+<script src="js/DataGeneration/data_generator.js"></script>
+<script src="js/DataGeneration/statement_generator.js"></script>
+<script src="js/renderer.js"></script>
 <script src="js/main.js"></script>
+<script src="js/prototype.js"></script>
 
 </html>
