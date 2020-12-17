@@ -16,3 +16,5 @@ Notes will be tracked in the Wiki tab. The <a href="https://gracefuljs.github.io
 * Refining the data generator to support more complicated mystery data
 * Implement character personalities to flavor text
 * Implement character relationships to add complexity  
+* Integrate Live2d SDK
+* Implement procedurally generated character appearances
