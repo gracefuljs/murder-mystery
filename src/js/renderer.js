@@ -180,26 +180,6 @@ const dummyImages = () => {
 const locationBgs = () => ["ballroom", "diningroom", "kitchen", "parlor", "stable", "study"]
 						  .map(imgName => "assets/images/rooms/" + imgName + ".jpg");
 
-export function assignSuspectGraphics(suspectList, spriteDict){
-
-	suspectList.forEach( (suspect) => {
-		let genderTag = (suspect.gender === "Male") ? "m" : "f";
-		let suspectNumber = suspect.name.charAt(suspect.name.length - 1);
-		let url = genderTag + "_suspect" + suspectNumber;
-		
-		suspect.graphic = spriteDict["elves"][url];
-		suspect.graphic.interactive = true;
-		suspect.graphic.buttonMode  = true;
-		suspect.graphic.on("pointerdown", () => {onClick(suspect); event.stopPropagation();});
-	});
-};
-
-function onClick(suspect){
-	let msg = `Hello, I'm ${suspect.name}!`;
-	dialogueScene.openDialogue(suspect);
-	dialogueScene.showDialogueBox(msg);
-};
-
 
 
 // /*------------------------------End Prototyping Images----------------------------------------*/

@@ -17,8 +17,10 @@ class Location{
 };
 
 //Preparing Location Game Objects
+const generateLocationGameObject = (locationName) => new Location(locationName, locationName.toLowerCase().replace(/\s+/g, '') );
+
 const generateLocationGameObjects = (locationList) =>  
-	[...locationList].map( (locationName) => new Location(locationName, locationName.toLowerCase().replace(/\s+/g, '') ));
+	[...locationList].map( (locationName) => generateLocationGameObject(locationName));
 
 
 const getMurderLocationFromData = (locationGameObjects, murderLocationName) => locationGameObjects.find( (location) => location.name == murderLocationName );

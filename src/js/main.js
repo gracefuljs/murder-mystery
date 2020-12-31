@@ -9,12 +9,74 @@ class Game{
 		this.renderer = new Renderer(900, 600, "suspect-details");
 		this.renderer.initialize();
 
+		this.dialogueScene = new DialogueScene(this.renderer.screen);
+	};
+
+	init(){
 		//For prototyping purposes only. Remove when applicable.
+		let generateMystery = this.generateNewMystery.bind(this);
 		document.getElementById("display-details").addEventListener("click",  generateMystery);
 	};
-}
+
+	generateNewMystery(){
+		console.log("Mystery Generated!");
+
+		//Game initializations that will be added to its own function at a later date
+		let locationObjects = generateLocationObjects(allLocations);
+
+		//Begin mystery generation...
+		let crimeData   = generateCrimeData();
+		let suspectList = createSuspectList(crimeData, locationObjects);
+		generateAllStatements(suspectList, locationObjects, crimeData);
+		
+		let {culpritIndex, motive, location, weapon} = crimeData;
+		
+
+		//After the data has been generated, turn all of it into game objects. 
+		//Game objects include rooms, characters, physical clues
+		//all of these objects will have images attached to them;
+		let rooms = initializeLocations(allLocations, suspectList, crimeData, game.renderer.sprites)
+		
+
+		let startingRoom = rooms.find((location) => location.isMurderLocation);
+
+		console.log("Generating new mystery...");
+
+		this.assignSuspectGraphics(suspectList, this.renderer.sprites);
+		navigateTo(startingRoom.name, rooms);
+
+		//For debugging purposes. Remove when necessary.
+		displayMysteryDetails(crimeData, suspectList, rooms);
+		let locations = document.getElementById("location-selection");
+		let startingIndex = Array.from(locations.options).map(option => option.value).indexOf(startingRoom.name);
+		locations.selectedIndex = startingIndex;
+	};
+
+	assignSuspectGraphics(suspectList, spriteDict){
+
+		suspectList.forEach( (suspect) => {
+			let genderTag = (suspect.gender === "Male") ? "m" : "f";
+			let suspectNumber = suspect.name.charAt(suspect.name.length - 1);
+			let url = genderTag + "_suspect" + suspectNumber;
+			
+			suspect.graphic = spriteDict["elves"][url];
+			suspect.graphic.interactive = true;
+			suspect.graphic.buttonMode  = true;
+			suspect.graphic.on("pointerdown", () => {
+				let msg = `Hello, I'm ${suspect.name}!`;
+				this.dialogueScene.openDialogue(suspect);
+				this.dialogueScene.showDialogueBox(msg);
+
+				event.stopPropagation();});
+		});
+	};
+
+	compileGameData(){};
+};
 
 let game = new Game();
+game.init();
+
 let dialogueScene = new DialogueScene(game.renderer.screen);
 //Create a new mystery
 let currentRoom = new Location("The Ether");
@@ -35,42 +97,22 @@ class Mystery{
 	init(){
 		this.currentRoom = new Location("The Ether");
 	}
-};
 
-function generateMystery(){
-
-	console.log("Mystery Generated!");
-
-	//Game initializations that will be added to its own function at a later date
-	let locationObjects = generateLocationObjects(allLocations);
-
-	//Begin mystery generation...
-	let crimeData   = generateCrimeData();
-	let suspectList = createSuspectList(crimeData, locationObjects);
-	generateAllStatements(suspectList, locationObjects, crimeData);
-	
-	let {culpritIndex, motive, location, weapon} = crimeData;
-	
-
-	//After the data has been generated, turn all of it into game objects. 
-	//Game objects include rooms, characters, physical clues
-	//all of these objects will have images attached to them;
-	let rooms = initializeLocations(allLocations, suspectList, crimeData, game.renderer.sprites)
-	
-
-	let startingRoom = rooms.find((location) => location.isMurderLocation);
-
-	console.log("Generating new mystery...");
-
-	assignSuspectGraphics(suspectList, game.renderer.sprites);
-	navigateTo(startingRoom.name, rooms);
-
-	//For debugging purposes. Remove when necessary.
-	displayMysteryDetails(crimeData, suspectList, rooms);
-	let locations = document.getElementById("location-selection");
-	let startingIndex = Array.from(locations.options).map(option => option.value).indexOf(startingRoom.name);
-	locations.selectedIndex = startingIndex;
-	
+	navigateToRoom(roomName, roomList){
+		if(this.currentRoom.name !== roomName){
+			let oldRoom = this.currentRoom;
+			
+			this.currentRoom = roomList.find((location) => location.name === roomName);
+			
+			if(oldRoom.graphic) oldRoom.graphic.visible = false;
+			hideOccupants(oldRoom);
+			dialogueScene.close();
+			
+			displayOccupants(currentRoom);
+			
+			if(currentRoom.graphic) currentRoom.graphic.visible = true;
+		};
+	};
 };
 
 function displayOccupants(room){
